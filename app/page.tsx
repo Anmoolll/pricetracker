@@ -1,3 +1,5 @@
+import HeroCarousel from "@/Components/HeroCarousel"
+import Searchbar from "@/Components/SearchBar"
 import Image from "next/image"
 const Home = () => {
   return (
@@ -22,9 +24,9 @@ const Home = () => {
               Powerfull, self-serve product and growth analytics to help you convert, engage, and retain more.
             </p>
 
-            searchbar
+            {Searchbar}
           </div>
-          HeroCarousel
+          {HeroCarousel}
         </div>
       </section>
       <section className="trending-section">
