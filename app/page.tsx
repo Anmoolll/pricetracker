@@ -9,7 +9,7 @@ const Home = () => (
           <p className="small-text">
             Smart Shopping Starts Here:
             <Image
-              src="/assets/icons/arrow-right.svg"
+              src="./assets/icons/arrow-right.svg"
               alt="Arrow-right"
               height={16}
               width={16} />
