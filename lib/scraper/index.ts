@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio'
-import { extractPrice } from '../utils';
+import { extractCurrency, extractDescription, extractPrice } from '../utils';
 
 export async function scrapeAmazonProduct(url: string){
     if(!url){
@@ -37,8 +37,41 @@ export async function scrapeAmazonProduct(url: string){
             $('.a-price.a-text-price'),
             $('.a-price.aok-align-center.reinventPricePriceToPayMargin')
         );
-        console.log({title, currentPrice});
-        
+
+        const originalPrice = extractPrice(
+            $('#priceblock_ourprice'),
+            $('#listPrice'),
+            $('.a-price.a-text-price span.a-offscreen'),
+            $('#priceblock_dealprice'),
+            $('.a-size-base.a-color-price')
+        );
+
+        const outOfStock = $('#availability span').text().trim().toLowerCase() === 'currently unavailable';
+        const currency = extractCurrency($('.a-price-symbol'))
+        const discountRate = $('.savingsPercentage').text().replace(/[-%]/g, "");
+        const description = extractDescription($);
+        const stars = $('.a-size-base .a-color-base').text().trim();
+        const review = $('#acrCustomerReviewText').text().trim().replace(/^(\d+)([a-zA-Z]+)$/, '');
+        const images = $('#imgBlkFront').attr('data-a-dynamic-image') || $('#landingImage').attr('data-a-dynamic-image') ||
+        '{}'
+        const imageUrls = Object.keys(JSON.parse(images));
+
+        const data = {
+            url,
+            title,
+            currency: currency || '$',
+            image: imageUrls[0],
+            currentPrice: Number(currentPrice),
+            originalPrice: Number(originalPrice),
+            priceHistory: [],
+            discountRate: Number(discountRate),
+            isOutOfStock: outOfStock,
+            stars: stars[0],
+            rating: review
+        }
+        console.log(data);
+
+
     } catch (error: any) {
         throw new Error(`Failed to Scrape Product: ${error.message}`);
     }
